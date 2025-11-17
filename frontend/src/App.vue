@@ -1,52 +1,75 @@
 <template>
-  <div id="app" class="min-h-screen bg-gray-50">
-    <nav class="bg-white shadow rounded-lg px-4 py-3 mb-4 mx-4 mt-4">
-      <div class="flex items-center justify-between">
-        <div class="flex flex-wrap gap-2">
-          <RouterLink
-            v-for="item in menu"
-            :key="item.to"
-            :to="item.to"
-            class="px-3 py-1 rounded border text-sm"
-            :class="isActive(item.to) ? 'bg-indigo-600 text-white border-transparent' : 'text-gray-700'"
-            >{{ item.label }}</RouterLink>
+  <div class="min-h-screen flex bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+    <!-- Mobile overlay & drawer -->
+    <transition name="fade">
+      <div v-if="mobileOpen" class="fixed inset-0 bg-black bg-opacity-30 z-30" @click="mobileOpen = false"></div>
+    </transition>
+
+    <!-- Sidebar (desktop) -->
+    <div class="hidden md:block">
+      <Sidebar />
+    </div>
+
+    <!-- Mobile topbar -->
+    <div class="md:hidden fixed top-0 left-0 right-0 z-20 bg-white dark:bg-slate-800 border-b dark:border-slate-700">
+      <div class="flex items-center justify-between px-3 py-2">
+        <div class="flex items-center gap-2">
+          <button @click="mobileOpen = true" class="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+          <div class="text-lg font-semibold">Aset TI</div>
         </div>
 
-        <div class="text-sm text-gray-500">Manajemen Aset TI</div>
+        <div class="flex items-center gap-2">
+          <div class="text-sm text-slate-500 dark:text-slate-300 hidden sm:block">Manajemen Aset</div>
+        </div>
       </div>
-    </nav>
+    </div>
 
-    <main class="mx-4 mb-8">
-      <router-view />
-    </main>
+    <!-- Mobile drawer -->
+    <transition name="slide">
+      <div v-if="mobileOpen" class="fixed inset-y-0 left-0 z-40 w-72 bg-white dark:bg-slate-800 border-r dark:border-slate-700 md:hidden">
+        <Sidebar />
+      </div>
+    </transition>
 
-    <!-- Toast di root supaya dapat dipanggil dari mana saja -->
-    <Toast />
+    <!-- main content -->
+    <div class="flex-1 min-h-screen pt-14 md:pt-6">
+      <!-- header area for desktop (optional small bar) -->
+      <header class="hidden md:flex items-center justify-between px-6 py-4 border-b dark:border-slate-700 bg-white dark:bg-slate-800">
+        <div class="text-lg font-semibold">Manajemen Aset</div>
+        <div class="text-sm text-slate-500 dark:text-slate-300">Selamat datang</div>
+      </header>
+
+      <!-- content area: SINGLE router-view -->
+      <main class="p-4 md:p-6">
+        <router-view />
+      </main>
+
+      <!-- Toast global (only once in app) -->
+      <Toast />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter, useRoute, RouterLink } from 'vue-router';
+import { ref, onMounted, onUnmounted } from 'vue';
+import Sidebar from './components/Sidebar.vue';
 import Toast from './components/Toast.vue';
 
-const router = useRouter();
-const route = useRoute();
+const mobileOpen = ref(false);
 
-const menu = [
-  { to: '/assets/laptop', label: 'Laptop' },
-  { to: '/assets/pc', label: 'PC' },
-  { to: '/assets/printer', label: 'Printer' },
-  { to: '/assets/monitor', label: 'Monitor' },
-  { to: '/assets/scanner', label: 'Scanner' },
-];
-
-function isActive(path) {
-  // simple active check: startsWith so '/assets/laptop/1' tetap memberi active pada /assets/laptop
-  return route.path.startsWith(path);
-}
+function handleSidebarClose() { mobileOpen.value = false; }
+onMounted(() => { window.addEventListener('sidebar:close', handleSidebarClose); });
+onUnmounted(() => { window.removeEventListener('sidebar:close', handleSidebarClose); });
 </script>
 
 <style>
-/* optional small tweak */
-#app { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+.fade-enter-active, .fade-leave-active { transition: opacity .2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.slide-enter-active { transition: transform .18s ease; transform-origin: left; }
+.slide-enter-from { transform: translateX(-12%); }
+.slide-leave-active { transition: transform .18s ease; }
+.slide-leave-to { transform: translateX(-12%); }
 </style>
