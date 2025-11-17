@@ -34,4 +34,22 @@ Proyek ini dirancang agar ringan, cepat, mudah dipelihara, dan cocok digunakan o
 ---
 
 ## 📁 Struktur Folder
+aset/
+├── backend/
+│ ├── assets/
+│ ├── project/
+│ └── manage.py
+├── frontend/
+├── .gitignore
+└── README.md
+
+
+---
+
+# 🛠 Instalasi & Menjalankan Project
+
+## 1️⃣ Clone Repository
+```bash
+git clone https://github.com/<username>/aset-management.git
+cd aset-management
 
