@@ -1,0 +1,90 @@
+# =========================
+# System / Editor
+# =========================
+.DS_Store
+Thumbs.db
+
+# VSCode: keep recommended extensions config but ignore other user settings
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains / other editor
+.idea/
+
+# Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# mac / windows temp
+*.swp
+*.swo
+
+# =========================
+# Python / Django
+# =========================
+# virtualenv
+venv/
+backend/venv/
+# bytecode
+**/__pycache__/
+*.py[cod]
+*.pyo
+# local Django DB or dev db files
+backend/db.sqlite3
+# django migrations built artifacts (if any you don't want)
+*.log
+*.pot
+
+# env / secrets
+.env
+*.env
+**/.env
+.env.*.local
+.env.local
+
+# =========================
+# Node / Frontend
+# =========================
+# dependencies
+frontend/node_modules/
+# build outputs
+frontend/dist/
+frontend/dist-ssr/
+# Vite / TypeScript build cache
+*.tsbuildinfo
+# coverage / test
+coverage/
+__screenshots__/
+# test runners / logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# local-only files
+*.local
+
+# eslint cache
+.eslintcache
+
+# cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# =========================
+# Generated / OS files
+# =========================
+*.db
+*.sqlite3
+*.bak
+
+# =========================
+# Misc
+# =========================
+dist/
+coverage/

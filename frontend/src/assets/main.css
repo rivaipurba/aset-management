@@ -1,0 +1,22 @@
+@import './base.css';
+@import "tailwindcss";
+
+/* Global layout */
+body {
+  @apply bg-gray-100 text-gray-800;
+}
+
+/* Container utama */
+#app {
+  @apply max-w-6xl mx-auto py-6 px-4;
+}
+
+/* Force readable table text if any earlier CSS interfering */
+table, th, td, button, input, select, textarea {
+  color: inherit !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* small helper */
+.hidden-scrollbar::-webkit-scrollbar { display: none; }
