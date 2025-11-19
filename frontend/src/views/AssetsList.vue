@@ -37,6 +37,11 @@
       <AssetTable 
         :assets="assets"
         :type="currentType"
+        :page="page"
+        :page-size="pageSize"
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
+        @sort="handleSort"
         @edit="openEdit"
         @delete="removeAsset"
         @view="goToDetail"
@@ -116,6 +121,10 @@ const nextPage = ref(null);
 const count = ref(0);
 const pageSize = 25;
 
+// sorting
+const sortBy = ref('created_at');
+const sortDesc = ref(true);
+
 const currentType = computed(() => {
   return route.params.type || 'laptop';
 });
@@ -124,10 +133,12 @@ const totalPages = computed(() => Math.max(1, Math.ceil(count.value / pageSize))
 
 async function fetchAssets() {
   try {
+    const ordering = (sortDesc.value ? '-' : '') + sortBy.value;
     const res = await api.listAssets({
       type: currentType.value,
       search: q.value || undefined,
       page: page.value,
+      ordering: ordering
     });
     assets.value = res.data.results || [];
     nextPage.value = res.data.next;
@@ -136,6 +147,17 @@ async function fetchAssets() {
     console.error(err);
     toastError('Gagal memuat data aset');
   }
+}
+
+function handleSort(field) {
+  if (sortBy.value === field) {
+    sortDesc.value = !sortDesc.value;
+  } else {
+    sortBy.value = field;
+    sortDesc.value = false; // Default to ascending for new field
+  }
+  page.value = 1; // Reset to first page on sort change
+  fetchAssets();
 }
 
 function openCreate() { editing.value = null; showForm.value = true; }

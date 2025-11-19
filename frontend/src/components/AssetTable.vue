@@ -6,12 +6,66 @@
         <thead>
           <tr class="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
             <th class="px-6 py-4">#</th>
-            <th class="px-6 py-4">Nama Aset</th>
-            <th class="px-6 py-4">Seri</th>
-            <th class="px-6 py-4">Pembuat</th>
-            <th class="px-6 py-4">Pemilik</th>
-            <th class="px-6 py-4">Lokasi</th>
-            <th class="px-6 py-4">Status</th>
+            <th @click="$emit('sort', 'name')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors select-none group">
+              <div class="flex items-center gap-1">
+                Nama Aset
+                <span v-if="sortBy === 'name'" class="text-indigo-500">
+                  <svg v-if="!sortDesc" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+                  <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+                <svg v-else class="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+              </div>
+            </th>
+            <th @click="$emit('sort', 'serial_number')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors select-none group">
+              <div class="flex items-center gap-1">
+                Seri
+                <span v-if="sortBy === 'serial_number'" class="text-indigo-500">
+                  <svg v-if="!sortDesc" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+                  <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+                <svg v-else class="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+              </div>
+            </th>
+            <th @click="$emit('sort', 'maker')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors select-none group">
+              <div class="flex items-center gap-1">
+                Pembuat
+                <span v-if="sortBy === 'maker'" class="text-indigo-500">
+                  <svg v-if="!sortDesc" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+                  <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+                <svg v-else class="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+              </div>
+            </th>
+            <th @click="$emit('sort', 'owner')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors select-none group">
+              <div class="flex items-center gap-1">
+                Pemilik
+                <span v-if="sortBy === 'owner'" class="text-indigo-500">
+                  <svg v-if="!sortDesc" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+                  <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+                <svg v-else class="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+              </div>
+            </th>
+            <th v-if="!isMonitorOrScanner" @click="$emit('sort', 'location')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors select-none group">
+              <div class="flex items-center gap-1">
+                Lokasi
+                <span v-if="sortBy === 'location'" class="text-indigo-500">
+                  <svg v-if="!sortDesc" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+                  <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+                <svg v-else class="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+              </div>
+            </th>
+            <th @click="$emit('sort', 'status')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors select-none group">
+              <div class="flex items-center gap-1">
+                Status
+                <span v-if="sortBy === 'status'" class="text-indigo-500">
+                  <svg v-if="!sortDesc" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+                  <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+                <svg v-else class="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+              </div>
+            </th>
             <th class="px-6 py-4 text-center">Aksi</th>
           </tr>
         </thead>
@@ -21,14 +75,20 @@
             :key="a.id"
             class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
           >
-            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ index + 1 }}</td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ (page - 1) * pageSize + index + 1 }}</td>
             <td class="px-6 py-4">
               <div class="font-medium text-slate-800 dark:text-slate-100">{{ a.name }}</div>
             </td>
             <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300 font-mono">{{ a.serial_number }}</td>
             <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{{ a.maker }}</td>
-            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{{ a.owner }}</td>
             <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+              <div v-if="isMonitorOrScanner" class="flex items-center gap-1.5">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                 {{ a.location }}
+              </div>
+              <span v-else>{{ a.owner }}</span>
+            </td>
+            <td v-if="!isMonitorOrScanner" class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
               <div class="flex items-center gap-1.5">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                 {{ a.location }}
@@ -46,7 +106,7 @@
             </td>
           </tr>
           <tr v-if="assets.length === 0">
-            <td colspan="8" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+            <td :colspan="isMonitorOrScanner ? 7 : 8" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
               <div class="flex flex-col items-center gap-2">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300 dark:text-slate-600"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 <p>Tidak ada data aset ditemukan.</p>
@@ -71,13 +131,15 @@
         </div>
         
         <div class="space-y-2 text-sm">
-          <div class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/50">
+          <div v-if="!isMonitorOrScanner" class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/50">
             <span class="text-slate-500 dark:text-slate-400">Lokasi</span>
             <span class="font-medium text-slate-700 dark:text-slate-200">{{ a.location || '-' }}</span>
           </div>
           <div class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/50">
             <span class="text-slate-500 dark:text-slate-400">Pemilik</span>
-            <span class="font-medium text-slate-700 dark:text-slate-200">{{ a.owner || '-' }}</span>
+            <span class="font-medium text-slate-700 dark:text-slate-200">
+              {{ isMonitorOrScanner ? (a.location || '-') : (a.owner || '-') }}
+            </span>
           </div>
           <div class="flex justify-between items-center pt-1">
             <span class="text-slate-500 dark:text-slate-400">Status</span>
@@ -125,11 +187,19 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 
 const props = defineProps({
   assets: Array,
-  type: String
+  type: String,
+  page: { type: Number, default: 1 },
+  pageSize: { type: Number, default: 25 },
+  sortBy: String,
+  sortDesc: Boolean
+});
+
+const isMonitorOrScanner = computed(() => {
+  return ['monitor', 'scanner'].includes(props.type?.toLowerCase());
 });
 
 const activeAsset = ref(null);

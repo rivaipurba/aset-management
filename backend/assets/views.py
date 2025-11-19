@@ -14,7 +14,7 @@ class AssetViewSet(viewsets.ModelViewSet):
     serializer_class = AssetSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name','serial_number','maker','owner','location']
-    ordering_fields = ['name','created_at','updated_at','status']
+    ordering_fields = ['name','serial_number','maker','owner','location','created_at','updated_at','status']
     # filtering by query params manually for type/status/location
     def get_queryset(self):
         qs = super().get_queryset()
