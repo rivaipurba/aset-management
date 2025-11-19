@@ -1,78 +1,215 @@
 <template>
-  <div class="p-6 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow">
-    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-semibold">{{ asset?.name || '—' }}</h1>
-        <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-          Seri: <span class="font-medium text-slate-800 dark:text-slate-100">{{ asset?.serial_number || '-' }}</span>
+  <div class="min-h-[80vh] space-y-6">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="p-3 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">
+          <!-- Icon based on type -->
+          <span v-html="getIconForType(type)" class="flex items-center justify-center w-8 h-8"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h1 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">{{ asset?.name || '—' }}</h1>
+            <span :class="['px-2.5 py-0.5 rounded-full text-xs font-medium border', statusColor(asset?.status)]">
+              {{ humanStatus(asset?.status) }}
+            </span>
+          </div>
+          <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+            <span class="flex items-center gap-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              SN: <span class="font-mono text-slate-700 dark:text-slate-300">{{ asset?.serial_number || '-' }}</span>
+            </span>
+            <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
+            <span class="flex items-center gap-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Update: {{ asset?.updated_at ? new Date(asset.updated_at).toLocaleDateString() : '-' }}
+            </span>
+          </div>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
-        <span :class="['px-3 py-1 rounded-full text-sm font-medium', statusColor(asset?.status)]">
-          {{ humanStatus(asset?.status) }}
-        </span>
-
-        <div class="text-sm text-slate-500 dark:text-slate-300">Diperbarui: <span class="font-medium">{{ asset?.updated_at ? new Date(asset.updated_at).toLocaleString() : '-' }}</span></div>
+        <button @click="goEdit" class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          Ubah
+        </button>
+        <button @click="doDelete" class="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors shadow-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          Hapus
+        </button>
       </div>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="space-y-3">
-        <div class="text-xs text-slate-500 dark:text-slate-300">Informasi Umum</div>
-        <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded">
-          <div class="text-sm"><strong>Pembuat:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.maker || '-' }}</span></div>
-          <div class="text-sm"><strong>Pemilik:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.owner || '-' }}</span></div>
-          <div class="text-sm"><strong>Lokasi:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.location || '-' }}</span></div>
-          <div class="text-sm"><strong>Catatan:</strong> <span class="text-slate-700 dark:text-slate-200">{{ asset?.notes || '-' }}</span></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left Column: General Info -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- General Info Card -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+            <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              Informasi Umum
+            </h3>
+          </div>
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-1">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pembuat (Merk)</div>
+              <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.maker || '-' }}</div>
+            </div>
+            <div class="space-y-1">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pemilik</div>
+              <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.owner || '-' }}</div>
+            </div>
+            <div class="space-y-1">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Lokasi</div>
+              <div class="text-slate-800 dark:text-slate-100 font-medium flex items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                {{ asset?.location || '-' }}
+              </div>
+            </div>
+            <div class="space-y-1 md:col-span-2">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catatan</div>
+              <div class="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50 text-sm leading-relaxed">
+                {{ asset?.notes || 'Tidak ada catatan tambahan.' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Specs Card -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+            <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><path d="M2 12h20"></path><path d="M2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6"></path><path d="M12 12V8a2 2 0 0 0-2-2H6"></path></svg>
+              Spesifikasi Teknis
+            </h3>
+          </div>
+          <div class="p-6">
+            <div v-if="isComputer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Prosesor</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.computer_spec?.processor || '-' }}</div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">RAM</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.computer_spec?.ram || '-' }}</div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Penyimpanan</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.computer_spec?.storage || '-' }}</div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sistem Operasi</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.computer_spec?.os || '-' }}</div>
+              </div>
+            </div>
+
+            <div v-else-if="isPrinter" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tipe Cetak</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">
+                  <span v-if="asset?.printer_spec?.is_color" class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 via-green-500 to-red-500"></span>
+                    Warna
+                  </span>
+                  <span v-else class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-slate-800"></span>
+                    Hitam Putih
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="isMonitor" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ukuran Layar</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.monitor_spec?.size_inch ? asset.monitor_spec.size_inch + ' Inch' : '-' }}</div>
+              </div>
+            </div>
+
+            <div v-else-if="isScanner" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Resolusi (DPI)</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.scanner_spec?.dpi || '-' }}</div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Konektivitas</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ asset?.scanner_spec?.connection_type || '-' }}</div>
+              </div>
+            </div>
+
+            <div v-else class="text-sm text-slate-500 italic">
+              Tidak ada spesifikasi khusus untuk jenis aset ini.
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="space-y-3">
-        <div class="text-xs text-slate-500 dark:text-slate-300">Spesifikasi</div>
-        <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded">
-          <template v-if="isComputer">
-            <div class="text-sm"><strong>RAM:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.computer_spec?.ram || '-' }}</span></div>
-            <div class="text-sm"><strong>Penyimpanan:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.computer_spec?.storage || '-' }}</span></div>
-            <div class="text-sm"><strong>Prosesor:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.computer_spec?.processor || '-' }}</span></div>
-            <div class="text-sm"><strong>OS:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.computer_spec?.os || '-' }}</span></div>
-          </template>
-
-          <template v-else-if="isPrinter">
-            <div class="text-sm"><strong>Berwarna:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.printer_spec?.is_color ? 'Ya' : 'Tidak' }}</span></div>
-          </template>
-
-          <template v-else-if="isMonitor">
-            <div class="text-sm"><strong>Ukuran (inch):</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.monitor_spec?.size_inch || '-' }}</span></div>
-          </template>
-
-          <template v-else-if="isScanner">
-            <div class="text-sm"><strong>DPI:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.scanner_spec?.dpi || '-' }}</span></div>
-            <div class="text-sm"><strong>Koneksi:</strong> <span class="text-slate-800 dark:text-slate-100">{{ asset?.scanner_spec?.connection_type || '-' }}</span></div>
-          </template>
-
-          <template v-else>
-            <div class="text-sm">-</div>
-          </template>
+      <!-- Right Column: Meta / History (Placeholder) -->
+      <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+            <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Riwayat
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="relative pl-4 border-l-2 border-slate-200 dark:border-slate-700 space-y-6">
+              <div class="relative">
+                <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-indigo-500 ring-4 ring-white dark:ring-slate-800"></div>
+                <div class="text-sm font-medium text-slate-800 dark:text-slate-100">Data Diperbarui</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ asset?.updated_at ? new Date(asset.updated_at).toLocaleString() : 'Belum pernah' }}</div>
+              </div>
+              <div class="relative">
+                <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600 ring-4 ring-white dark:ring-slate-800"></div>
+                <div class="text-sm font-medium text-slate-800 dark:text-slate-100">Aset Dibuat</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ asset?.created_at ? new Date(asset.created_at).toLocaleString() : '-' }}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="mt-6 flex gap-2">
-      <button @click="goEdit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">Ubah</button>
-      <button @click="doDelete" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500">Hapus</button>
     </div>
   </div>
+
+  <!-- Form Modal -->
+  <AssetForm 
+    v-if="showForm"
+    :type="type"
+    :initial="editing"
+    @close="closeForm"
+    @saved="onSaved"
+  />
+
+  <!-- Delete Confirmation -->
+  <ConfirmDialog
+    v-if="showDeleteConfirm"
+    title="Hapus Aset"
+    :message="`Apakah Anda yakin ingin menghapus aset '${asset?.name}'? Tindakan ini tidak dapat dibatalkan.`"
+    @confirm="executeDelete"
+    @cancel="cancelDelete"
+  />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import api from '../services/api';
 import { useRoute, useRouter } from 'vue-router';
+import AssetForm from '../components/AssetForm.vue';
+import { toastSuccess, toastError } from '../utils/toast';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
 
 const route = useRoute();
 const router = useRouter();
 const asset = ref(null);
+
+// Form state
+const showForm = ref(false);
+const editing = ref(null);
+
+// Delete confirmation state
+const showDeleteConfirm = ref(false);
 
 const type = route.params.type || 'laptop';
 const id = route.params.id;
@@ -90,12 +227,23 @@ function humanStatus(s) {
 
 function statusColor(s) {
   switch (s) {
-    case 'available': return 'bg-green-100 text-green-700 dark:bg-green-700/30 dark:text-green-300';
-    case 'in_use': return 'bg-blue-100 text-blue-700 dark:bg-blue-700/30 dark:text-blue-300';
-    case 'maintenance': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-700/30 dark:text-yellow-300';
-    case 'retired': return 'bg-gray-200 text-gray-700 dark:bg-gray-700/30 dark:text-gray-300';
-    default: return 'bg-slate-200 text-slate-700 dark:bg-slate-700/40 dark:text-slate-300';
+    case 'available': return 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800';
+    case 'in_use': return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800';
+    case 'maintenance': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800';
+    case 'retired': return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
+    default: return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
   }
+}
+
+function getIconForType(t) {
+  const map = {
+    laptop: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>`,
+    pc: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>`,
+    printer: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>`,
+    monitor: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`,
+    scanner: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"></path><path d="M2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6"></path><path d="M12 12V8a2 2 0 0 0-2-2H6"></path></svg>`
+  };
+  return map[t] || map.laptop;
 }
 
 async function load() {
@@ -104,25 +252,46 @@ async function load() {
     asset.value = res.data;
   } catch (err) {
     console.error(err);
-    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Gagal memuat detail aset', type: 'error' } }));
+    toastError('Gagal memuat detail aset');
   }
 }
 
 function goEdit() {
-  router.push({ name: 'assets-list', params: { type, id: asset.value?.id }});
-  // atau buka modal edit tergantung implementasimu
+  editing.value = asset.value;
+  showForm.value = true;
 }
 
-async function doDelete() {
-  if (!confirm('Hapus aset ini?')) return;
+function closeForm() {
+  showForm.value = false;
+  editing.value = null;
+}
+
+function onSaved() {
+  closeForm();
+  load(); // Reload data to show changes
+}
+
+// --- Delete Logic ---
+function doDelete() {
+  showDeleteConfirm.value = true;
+}
+
+function cancelDelete() {
+  showDeleteConfirm.value = false;
+}
+
+async function executeDelete() {
   try {
     await api.deleteAsset(id);
-    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Aset berhasil dihapus', type: 'success' } }));
+    toastSuccess('Aset berhasil dihapus');
     router.push(`/assets/${type}`);
   } catch {
-    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Gagal menghapus aset', type: 'error' } }));
+    toastError('Gagal menghapus aset');
+  } finally {
+    cancelDelete();
   }
 }
+// --- End Delete Logic ---
 
 onMounted(load);
 </script>

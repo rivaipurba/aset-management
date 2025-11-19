@@ -8,17 +8,12 @@
   >
     <!-- top area: logo + collapse button -->
     <div class="flex items-center justify-between px-3 py-3 border-b dark:border-slate-700">
-      <div class="flex items-center gap-2">
+      <div @click="toggleCollapse" class="flex items-center gap-2 cursor-pointer">
         <div class="flex items-center justify-center w-9 h-9 rounded bg-indigo-600 text-white">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
         <div v-if="!collapsed" class="text-sm font-semibold text-slate-700 dark:text-slate-100">Aset TI</div>
       </div>
-
-      <button @click="toggleCollapse" class="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
-        <svg v-if="!collapsed" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-600 dark:text-slate-200" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-600 dark:text-slate-200" viewBox="0 0 24 24" fill="none"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
     </div>
 
     <!-- menu -->

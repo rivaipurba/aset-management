@@ -7,9 +7,7 @@ body {
 }
 
 /* Container utama */
-#app {
-  @apply max-w-6xl mx-auto py-6 px-4;
-}
+
 
 /* Force readable table text if any earlier CSS interfering */
 table, th, td, button, input, select, textarea {

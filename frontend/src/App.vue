@@ -34,9 +34,9 @@
     </transition>
 
     <!-- main content -->
-    <div class="flex-1 min-h-screen pt-14 md:pt-6">
+    <div class="flex-1 min-h-screen">
       <!-- header area for desktop (optional small bar) -->
-      <header class="hidden md:flex items-center justify-between px-6 py-4 border-b dark:border-slate-700 bg-white dark:bg-slate-800">
+      <header class="hidden md:flex items-center justify-between px-6 py-3 border-b dark:border-slate-700 bg-white dark:bg-slate-800">
         <div class="text-lg font-semibold">Manajemen Aset</div>
         <div class="text-sm text-slate-500 dark:text-slate-300">Selamat datang</div>
       </header>

@@ -4,13 +4,13 @@ import AssetsList from '@/views/AssetsList.vue';
 import AssetDetail from '@/views/AssetDetail.vue';
 
 // jika kamu ingin page Dashboard, tambahkan file view dan uncomment
-// import Dashboard from '@/views/Dashboard.vue';
+import Dashboard from '@/views/Dashboard.vue';
 
 const routes = [
   { path: '/', redirect: '/assets/laptop' },
 
   // dashboard optional
-  // { path: '/dashboard', name: 'dashboard', component: Dashboard },
+  { path: '/dashboard', name: 'dashboard', component: Dashboard },
 
   {
     path: '/assets/:type',
