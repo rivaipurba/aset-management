@@ -199,6 +199,7 @@ import { useRoute, useRouter } from 'vue-router';
 import AssetForm from '../components/AssetForm.vue';
 import { toastSuccess, toastError } from '../utils/toast';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
+import { humanStatus, statusColor } from '../utils/assetUtils';
 
 const route = useRoute();
 const router = useRouter();
@@ -218,22 +219,6 @@ const isComputer = computed(() => ['laptop','pc'].includes(type));
 const isPrinter = computed(() => type === 'printer');
 const isMonitor = computed(() => type === 'monitor');
 const isScanner = computed(() => type === 'scanner');
-
-function humanStatus(s) {
-  if (!s) return '-';
-  const map = { available: 'Tersedia', in_use: 'Sedang dipakai', maintenance: 'Perawatan', retired: 'Pensiun' };
-  return map[s] || s;
-}
-
-function statusColor(s) {
-  switch (s) {
-    case 'available': return 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800';
-    case 'in_use': return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800';
-    case 'maintenance': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800';
-    case 'retired': return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
-    default: return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
-  }
-}
 
 function getIconForType(t) {
   const map = {

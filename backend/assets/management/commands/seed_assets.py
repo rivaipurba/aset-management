@@ -147,9 +147,11 @@ class Command(BaseCommand):
                             }
                         )
                     elif type_code == 'printer':
+                         # Infer color from name
+                         is_color = 'color' in name.lower() or 'warna' in name.lower()
                          PrinterSpec.objects.update_or_create(
                             asset=asset,
-                            defaults={'is_color': False} # Default to False as not in sheet
+                            defaults={'is_color': is_color}
                         )
                     elif type_code == 'scanner':
                         ScannerSpec.objects.update_or_create(
@@ -158,7 +160,7 @@ class Command(BaseCommand):
                         )
 
                     action = "Created" if created else "Updated"
-                    # self.stdout.write(self.style.SUCCESS(f"{action}: {asset.name} ({serial})"))
+                    self.stdout.write(self.style.SUCCESS(f"{action}: {asset.name} ({serial})"))
                     success_count += 1
 
                 except Exception as e:

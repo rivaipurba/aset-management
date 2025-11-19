@@ -14,7 +14,7 @@ class Asset(models.Model):
     id = models.AutoField(primary_key=True)
     asset_type = models.ForeignKey(AssetType, db_column='asset_type_id', on_delete=models.RESTRICT)
     name = models.CharField(max_length=255)
-    serial_number = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    serial_number = models.CharField(max_length=255, unique=True, null=True, blank=True, db_index=True)
     maker = models.CharField(max_length=255, null=True, blank=True)
     owner = models.CharField(max_length=255, null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
